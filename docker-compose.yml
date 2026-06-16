@@ -1,0 +1,34 @@
+services:
+  bankos-proxy:
+    build: .
+    container_name: bankos_proxy
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: bankos
+      DB_PASS: secret
+      # ── SMTP (Gmail) ──────────────────────────────────────────────
+      # Genera una "Contraseña de aplicación" en:
+      #   https://myaccount.google.com/apppasswords
+      # (requiere verificación en 2 pasos activada en la cuenta Gmail).
+      # NO uses tu contraseña normal de Gmail: no funciona por SMTP.
+      #
+      # Puerto 587 (STARTTLS) suele funcionar mejor en VPS que el 465.
+      # Si usas 465 → SMTP_SECURE=true. Si usas 587 → SMTP_SECURE=false.
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      MAIL_FROM: ${MAIL_FROM}
+    networks:
+      - bankos
+
+networks:
+  bankos:
+    external: true
+    name: 192-bankroot_bankos
